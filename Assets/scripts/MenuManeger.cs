@@ -36,7 +36,6 @@ public class MenuManager : MonoBehaviour
                 PauseGame();
         }
     }
-    // ----------- Funções de Menu -----------
     public void PauseGame()
     {
         mainMenuCanvas.SetActive(true);
@@ -59,7 +58,7 @@ public class MenuManager : MonoBehaviour
         Cursor.visible = false;
 
         if (playerMove != null)
-            playerMove.SetMovementEnabled(true); // libera movimento
+            playerMove.SetMovementEnabled(true);
     }
 
     public void QuitGame()
@@ -72,7 +71,6 @@ public class MenuManager : MonoBehaviour
 #endif
     }
 
-    // ----------- Submenus -----------
     public void OpenAudioMenu()
     {
         CloseAllMenus();

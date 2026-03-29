@@ -15,8 +15,6 @@ public class MainMenuManager : MonoBehaviour
         if (settingsMenu != null) settingsMenu.SetActive(false);
     }
 
-    // ===== Botões =====
-
     public void PlayGame()
     {
         if (!string.IsNullOrEmpty(playSceneName))

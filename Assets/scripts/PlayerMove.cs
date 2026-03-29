@@ -33,10 +33,15 @@ public class PlayerMove : MonoBehaviour
     private Vector3 inputDirection = Vector3.zero;
     private bool isRunning = false;
 
+    private IMovementStrategy currentStrategy;
+    private WalkStrategy walkStrategy = new WalkStrategy();
+    private RunStrategy runStrategy = new RunStrategy();
+
     void Start()
     {
         cc = GetComponent<CharacterController>();
         stamina = maxStamina;
+        currentStrategy = walkStrategy;
         UpdateHUD();
     }
 
@@ -51,7 +56,6 @@ public class PlayerMove : MonoBehaviour
             return;
         }
 
-        // ===== Código normal de movimento e stamina =====
         float v = Input.GetAxis("Vertical");
         float h = Input.GetAxis("Horizontal");
 
@@ -66,17 +70,22 @@ public class PlayerMove : MonoBehaviour
                     && Input.GetKey(KeyCode.LeftShift)
                     && canRun;
 
-        float speed = isRunning ? runSpeed : walkSpeed;
+        currentStrategy = isRunning ? runStrategy : walkStrategy;
 
         if (cc.isGrounded)
         {
-            moveDirection = inputDirection * speed;
+            Vector3 horizontalMove = currentStrategy.Move(inputDirection, transform);
+
+            moveDirection.x = horizontalMove.x;
+            moveDirection.z = horizontalMove.z;
+
             if (Input.GetButtonDown("Jump"))
                 moveDirection.y = jumpForce;
         }
         else
         {
-            Vector3 airMove = inputDirection * speed * airControl;
+            Vector3 airMove = currentStrategy.Move(inputDirection, transform) * airControl;
+
             moveDirection.x = Mathf.Lerp(moveDirection.x, airMove.x, airControl * Time.deltaTime * 5f);
             moveDirection.z = Mathf.Lerp(moveDirection.z, airMove.z, airControl * Time.deltaTime * 5f);
         }
@@ -87,7 +96,6 @@ public class PlayerMove : MonoBehaviour
         if (inputDirection.magnitude > 0.1f)
             transform.rotation = Quaternion.LookRotation(inputDirection);
 
-        // ===== Stamina =====
         if (isRunning)
         {
             stamina -= staminaDrainRate * Time.deltaTime;

@@ -12,7 +12,6 @@ public class DeadZone : MonoBehaviour
             CharacterController cc = other.GetComponent<CharacterController>();
             PlayerMove pm = other.GetComponent<PlayerMove>();
 
-            // Ação de respawn encapsulada
             System.Action respawnAction = () =>
             {
                 if (cc != null)
@@ -36,7 +35,6 @@ public class DeadZone : MonoBehaviour
             }
             else
             {
-                // Fallback sem fade
                 respawnAction.Invoke();
             }
         }

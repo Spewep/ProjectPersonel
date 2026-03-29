@@ -33,7 +33,6 @@ public class PlayerData : MonoBehaviour
         UpdateHUD();
     }
 
-    // ===== Dinheiro e Pontos =====
     public void AddMoney(int amount)
     {
         money += amount;
@@ -47,7 +46,6 @@ public class PlayerData : MonoBehaviour
         UpdateHUD();
     }
 
-    // ===== Sistema de XP e Level =====
     public void AddXP(int amount)
     {
         currentXP += amount;
@@ -73,7 +71,6 @@ public class PlayerData : MonoBehaviour
             xpBar.fillAmount = (float)currentXP / XPToNextLevel();
     }
 
-    // ===== Salvar =====
     public void SaveData()
     {
         PlayerPrefs.SetInt("Money", money);
