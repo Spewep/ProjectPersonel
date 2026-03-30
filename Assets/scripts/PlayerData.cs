@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class PlayerData : MonoBehaviour
 {
     public static PlayerData Instance;
+    public static event Action OnDataChanged;
 
     [Header("HUD")]
     public Text moneyText;
@@ -19,6 +21,7 @@ public class PlayerData : MonoBehaviour
 
     void Awake()
     {
+        DontDestroyOnLoad(gameObject);
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
@@ -33,17 +36,26 @@ public class PlayerData : MonoBehaviour
         UpdateHUD();
     }
 
+    void OnEnable()
+    {
+        OnDataChanged += UpdateHUD;
+    }
+
+    void OnDisable()
+    {
+        OnDataChanged -= UpdateHUD;
+    }
+
     public void AddMoney(int amount)
     {
         money += amount;
-        UpdateHUD();
+        OnDataChanged?.Invoke();
     }
 
     public void AddPoints(int amount)
     {
         points += amount;
         AddXP(amount);
-        UpdateHUD();
     }
 
     public void AddXP(int amount)
@@ -54,7 +66,7 @@ public class PlayerData : MonoBehaviour
             currentXP -= XPToNextLevel();
             level++;
         }
-        UpdateHUD();
+        OnDataChanged?.Invoke();
     }
 
     int XPToNextLevel()
@@ -67,10 +79,18 @@ public class PlayerData : MonoBehaviour
         if (moneyText != null) moneyText.text = "Dinheiro: " + money;
         if (pointsText != null) pointsText.text = "Pontos: " + points;
         if (levelText != null) levelText.text = "Nível: " + level;
-        if (xpBar != null)
-            xpBar.fillAmount = (float)currentXP / XPToNextLevel();
+        if (xpBar != null)  xpBar.fillAmount = (float)currentXP / XPToNextLevel();
     }
 
+    public void ResetData()
+    {
+        PlayerPrefs.DeleteAll();
+        money = 0;
+        points = 0;
+        level = 0;
+        currentXP = 0;
+        OnDataChanged?.Invoke();
+    }
     public void SaveData()
     {
         PlayerPrefs.SetInt("Money", money);
@@ -78,29 +98,30 @@ public class PlayerData : MonoBehaviour
         PlayerPrefs.SetInt("Level", level);
         PlayerPrefs.SetInt("XP", currentXP);
         PlayerPrefs.Save();
+
         Debug.Log("Dados salvos!");
     }
-    private void OnApplicationQuit()
+    public bool SpendMoney(int amount)
     {
-        SaveData();
-    }
-     public void ResetData()
-    {
-        PlayerPrefs.DeleteKey("Money");
-        PlayerPrefs.DeleteKey("Points");
-        PlayerPrefs.DeleteKey("Level");
-        PlayerPrefs.DeleteKey("XP");
-        PlayerPrefs.Save();
-
-        if (PlayerData.Instance != null)
+        if (money >= amount)
         {
-            PlayerData.Instance.money = 0;
-            PlayerData.Instance.points = 0;
-            PlayerData.Instance.level = 0;
-            PlayerData.Instance.currentXP = 0;
-            PlayerData.Instance.UpdateHUD();
+            money -= amount;
+            OnDataChanged?.Invoke();
+            return true;
         }
 
-        Debug.Log("PlayerData resetado!");
+        return false;
+    }
+
+    public bool SpendPoints(int amount)
+    {
+        if (points >= amount)
+        {
+            points -= amount;
+            OnDataChanged?.Invoke();
+            return true;
+        }
+
+        return false;
     }
 }

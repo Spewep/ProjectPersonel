@@ -30,10 +30,8 @@ public class MenuManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isPaused)
-                ResumeGame();
-            else
-                PauseGame();
+            if (isPaused) ResumeGame();
+            else PauseGame();
         }
     }
     public void PauseGame()
@@ -41,11 +39,12 @@ public class MenuManager : MonoBehaviour
         mainMenuCanvas.SetActive(true);
         isPaused = true;
 
+        Time.timeScale = 0f;
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        if (playerMove != null)
-            playerMove.SetMovementEnabled(false);
+        if (playerMove != null) playerMove.SetMovementEnabled(false);
     }
 
     public void ResumeGame()
@@ -54,11 +53,12 @@ public class MenuManager : MonoBehaviour
         mainMenuCanvas.SetActive(false);
         isPaused = false;
 
+        Time.timeScale = 1f;
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        if (playerMove != null)
-            playerMove.SetMovementEnabled(true);
+        if (playerMove != null) playerMove.SetMovementEnabled(true);
     }
 
     public void QuitGame()

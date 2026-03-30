@@ -17,34 +17,28 @@ public class MainMenuManager : MonoBehaviour
 
     public void PlayGame()
     {
-        if (!string.IsNullOrEmpty(playSceneName))
-            SceneManager.LoadScene(playSceneName);
-        else
-            Debug.LogWarning("Nome da cena de Play não definido!");
+        if (!string.IsNullOrEmpty(playSceneName)) SceneManager.LoadScene(playSceneName);
+        else Debug.LogWarning("Nome da cena de Play não definido!");
     }
 
     public void OpenCredits()
     {
-        if (creditsMenu != null)
-            creditsMenu.SetActive(true);
+        if (creditsMenu != null) creditsMenu.SetActive(true);
     }
 
     public void OpenSettings()
     {
-        if (settingsMenu != null)
-            settingsMenu.SetActive(true);
+        if (settingsMenu != null) settingsMenu.SetActive(true);
     }
 
     public void CloseCredits()
     {
-        if (creditsMenu != null)
-            creditsMenu.SetActive(false);
+        if (creditsMenu != null) creditsMenu.SetActive(false);
     }
 
     public void CloseSettings()
     {
-        if (settingsMenu != null)
-            settingsMenu.SetActive(false);
+        if (settingsMenu != null) settingsMenu.SetActive(false);
     }
 
     public void QuitGame()

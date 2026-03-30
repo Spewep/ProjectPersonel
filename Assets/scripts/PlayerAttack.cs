@@ -3,15 +3,10 @@ using UnityEngine.UI;
 
 public class PlayerAttack : MonoBehaviour
 {
-    [Header("HUD")]
-    public Text moneyText;
-    public Text pointsText;
-    public PlayerData playerData;
-
     [Header("Config")]
     public float attackRange = 2f;
-    public int money = 0;
-    public int points = 0;
+    public SkillManager skillManager;
+
 
     [Header("Cooldown")]
     public float attackCooldown = 0.5f;
@@ -33,21 +28,27 @@ public class PlayerAttack : MonoBehaviour
 
         if (Physics.Raycast(origin, direction, out RaycastHit hit, attackRange))
         {
-            if (hit.collider.CompareTag("toycoon"))
+            //Debug.Log("Acertou: " + hit.collider.name);
+
+            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+
+            if (interactable != null)
             {
-                money += 1;
-                points += 1;
-                UpdateHUD();
-                playerData.AddMoney(1);
-                playerData.AddPoints(1);
+                interactable.Interact();
             }
         }
-        Debug.DrawRay(origin, direction * attackRange, Color.red, 0.5f);
-    }
 
-    void UpdateHUD()
+        Debug.DrawRay(origin, direction * attackRange, Color.green, 1f);
+    }
+    public int GetDamage()
     {
-        if (moneyText != null) moneyText.text = "Dinheiro: " + money;
-        if (pointsText != null) pointsText.text = "Pontos: " + points;
+        int damage = 1;
+
+        if (skillManager != null && skillManager.HasSkill("Ataque Forte"))
+        {
+            damage = 3;
+        }
+
+        return damage;
     }
 }
